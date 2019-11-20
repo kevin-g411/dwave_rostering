@@ -1,0 +1,180 @@
+
+Sub output()
+'
+' output Macro
+'
+'d-waveの出力データを整形して表示する
+'「実行」ボタンを押して最後に実行されるマクロ
+
+'d-wave output name candidates
+'startdate_members_days_skills_alpha.csv
+'
+
+Dim n As Integer, i As Integer, j As Integer, k As Integer, ind As Integer, ind2 As Integer, lack As Integer
+Dim s As String, t As String
+Dim str1 As String, str2 As String, str3 As String, str4 As String, str5 As String
+Dim buf As Integer, name As String, Target As String
+Dim binary() As Variant
+Dim members As Integer, days As Integer
+Dim dif As Integer, wf As Double
+Dim objSheet As Variant
+
+Sheets(2).Activate
+Range("5:1048576").Delete
+
+members = Worksheets("params").Range("A1")
+days = Worksheets("params").Range("B1")
+skills = Worksheets("params").Range("C1")
+Range("C2").Value = stamp
+Range("C3").Value = days
+Range("C4").Value = members
+               
+For i = 1 To days * members
+    Worksheets("params").Cells(3, i).Value = Worksheets("params").Cells(3, i) - 1
+    If Worksheets("params").Cells(3, i) < 0 Then
+        Worksheets("params").Cells(3, i).Value = -1 * Worksheets("params").Cells(3, i)
+    End If
+Next
+               
+Range(Cells(7, 6), Cells(6 + members, 6)).Select
+With Selection
+    .HorizontalAlignment = xlCenter
+    .VerticalAlignment = xlCenter
+    .MergeCells = True
+End With
+Range(Cells(5, 8), Cells(5, 7 + days)).Select
+With Selection
+    .HorizontalAlignment = xlCenter
+    .VerticalAlignment = xlCenter
+    .MergeCells = True
+End With
+
+Range("F7").Value = "従業員"
+Range("H5").Value = "時間"
+For i = 0 To members - 1
+    Cells(i + 7, 7).Value = Chr(i + 65)
+Next i
+Cells(i + 7, 7).Value = "スキル不足"
+Columns("G:G").EntireColumn.AutoFit
+For j = 0 To days - 1
+    Cells(6, j + 8).Value = j + 1
+Next j
+
+
+Dim skill() As Variant
+ReDim skill(members * skills)
+For i = 1 To members * skills
+    skill(i - 1) = Worksheets("params").Cells(2, i)
+Next
+Dim subm() As Variant
+ReDim subm(members * days)
+For i = 1 To members * days
+    subm(i - 1) = Worksheets("params").Cells(3, i)
+Next
+Dim req() As Variant
+ReDim req(days * skills)
+For i = 1 To skills * days
+    req(i - 1) = Worksheets("params").Cells(4, i)
+Next
+
+ind = 1
+n = 1
+name = "C:\Users\watanabe.kevin\Desktop\d-wave_output_oji\Dwave" + stamp + ".csv"
+Open name For Input As #n
+    
+'    Do While Not EOF(n)
+'        i = i + 1
+    Input #n, str1, str2, str3, str4, str5
+    
+    i = 0
+    j = 0
+           
+    Do While ind <> 0
+        s = CStr(j)
+        t = "x" + s
+        If j < 10 Then
+            buf = Mid(str1, InStr(1, str1, t) + 5, 1)
+        ElseIf j < 100 Then
+            buf = Mid(str1, InStr(1, str1, t) + 6, 1)
+        Else
+            buf = Mid(str1, InStr(1, str1, t) + 7, 1)
+
+        End If
+        
+        'Cells(14 + j, 30).Value = buf
+        'Cells(14 + j, 31).Value = j
+        
+        ReDim Preserve binary(j)
+        binary(j) = buf
+        
+        j = j + 1
+        ind = InStr(str1, j)
+    Loop
+Close #n
+
+For i = 0 To days - 1
+    For j = 0 To members - 1
+        ind = i * members + j
+        Cells(j + 7, i + 8).Value = binary(ind)
+        dif = binary(ind) - subm(ind)
+        Cells(j + 7, i + 8).Select
+        If binary(ind) = 0 Then
+            With Selection.Font
+                .ThemeColor = xlThemeColorDark1
+                .TintAndShade = 0
+            End With
+        End If
+        If dif = 0 Then
+            With Selection.Interior
+                .Pattern = xlSolid
+                .PatternColorIndex = xlAutomatic
+                .ThemeColor = xlThemeColorAccent6
+                .TintAndShade = 0.599993896298105
+                .PatternTintAndShade = 0
+            End With
+        ElseIf dif < 0 Then
+            With Selection.Interior
+                .Pattern = xlSolid
+                .PatternColorIndex = xlAutomatic
+                .ThemeColor = xlThemeColorAccent4
+                .TintAndShade = 0.599993896298105
+                .PatternTintAndShade = 0
+            End With
+        Else
+            With Selection.Interior
+                .Pattern = xlSolid
+                .PatternColorIndex = xlAutomatic
+                .Color = 10053375
+                .TintAndShade = 0
+                .PatternTintAndShade = 0
+            End With
+        End If
+    Next j
+Next i
+    
+For i = 0 To days - 1
+    lack = 0
+    For j = 0 To skills - 1
+    wf = 0
+        For k = 0 To members - 1
+            ind = i * members + k
+            ind2 = k * skills + j
+            wf = wf + binary(ind) * skill(ind2)
+        Next k
+        ind = i * skills + j
+        dif = wf - req(ind)
+        If dif < 0 Then
+           lack = lack + 1
+        End If
+    Next j
+    If lack = 0 Then
+        Cells(7 + members, 8 + i).Value = "なし"
+        Cells(7 + members, 8 + i).Font.Color = xlThemeColorLight1
+    Else
+        Cells(7 + members, 8 + i).Value = "あり"
+        Cells(7 + members, 8 + i).Font.Color = -16776961
+    End If
+Next i
+    
+'    Loop
+End Sub
