@@ -1,0 +1,16 @@
+Sub button()
+'
+' button Macro
+'
+'「実行」ボタンを押して実行するマクロを制御するマクロ
+
+MsgBox "計算準備中"
+Call execute
+
+MsgBox "計算開始"
+Call python_exe
+
+MsgBox "計算終了"
+Call output
+
+End Sub
