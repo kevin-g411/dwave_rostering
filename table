@@ -1,0 +1,119 @@
+Sub table()
+'
+' table を作成する Macro
+'「反映」というボタンを押して実行するマクロ
+
+Dim ii As Integer
+Dim j As Integer
+Dim k As Integer
+
+Dim members As Integer
+Dim days As Integer
+Dim skills As Integer
+members = Range("C2").Value
+days = Range("C3").Value
+skills = Range("C4").Value
+
+Cells.Clear
+Range("B2").Value = "人数"
+Range("C2").Value = members
+Range("B3").Value = "日数"
+Range("C3").Value = days
+Range("B4").Value = "スキル数"
+Range("C4").Value = skills
+
+
+Range("B6").Value = "スキル表"
+For i = 0 To members - 1
+  Cells(i + 7, 2).Value = Chr(i + 65)
+Next i
+
+For k = 0 To skills - 1
+  Cells(6, k + 3).Value = Chr(k + 97)
+Next k
+
+Cells(6, skills + 4).Value = "出勤希望日"
+For i = 0 To members - 1
+  Cells(i + 7, skills + 4).Value = Chr(i + 65)
+Next i
+
+For j = 0 To days - 1
+  Cells(6, j + skills + 5).Value = j + 1
+Next j
+
+Cells(6, skills + days + 6).Value = "必要スキル数"
+For k = 0 To skills - 1
+  Cells(6, k + skils + days + 10).Value = Chr(k + 97)
+Next k
+  
+For j = 0 To days - 1
+  Cells(j + 7, skills + days + 6).Value = j + 1
+Next j
+ 
+Cells.Select
+Selection.EntireColumn.AutoFit
+
+    Range("C2:D2").Select
+    Selection.Merge True
+    Range("C3:D3").Select
+    Selection.Merge True
+    Range("C4:D4").Select
+    Selection.Merge True
+    
+    Range("B2:D2").Select
+    With Selection.Borders(xlEdgeBottom)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+    End With
+    Range("B3:D3").Select
+    With Selection.Borders(xlEdgeTop)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+    End With
+    With Selection.Borders(xlEdgeBottom)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+    End With
+    Range("B4:D4").Select
+    With Selection.Borders(xlEdgeBottom)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+    End With
+    With Selection.Borders(xlEdgeBottom)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+    End With
+ 
+     Range(Cells(6, 2), Cells(6, 2 + skills)).Select
+    With Selection.Borders(xlEdgeBottom)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+    End With
+    Range(Cells(6, 4 + skills), Cells(6, 4 + skills + days)).Select
+    With Selection.Borders(xlEdgeBottom)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+     End With
+    Range(Cells(6, 6 + skills + days), Cells(6, 6 + 2 * skills + days)).Select
+    With Selection.Borders(xlEdgeBottom)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+    End With
+    
+    Range(Cells(6, 2), Cells(6 + members, 2)).Select
+    With Selection.Borders(xlEdgeRight)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+    End With
+    Range(Cells(6, 4 + skills), Cells(6 + members, 4 + skills)).Select
+    With Selection.Borders(xlEdgeRight)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+    End With
+    Range(Cells(6, 6 + skills + days), Cells(6 + days, 6 + skills + days)).Select
+    With Selection.Borders(xlEdgeRight)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+    End With
+    
+End Sub
