@@ -1,9 +1,0 @@
-Public Sub python_exe()
-'
-' python_exe Macro
-'外部にあるpythonファイルに書いてある処理を実行する
-'「実行」ボタンを押して2個目に実行されるマクロ
-'
-   Call RunPython("import staff_rostering_1062; staff_rostering_1062.callDwave('" & stamp & "')")
-'
-End Sub
